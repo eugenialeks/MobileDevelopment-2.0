@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="24dp"
+    tools:context=".presentation.MainActivity">
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/topGuide"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_end="676dp" />
+
+    <TextView
+        android:id="@+id/textViewMovie"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Нет данных!"
+        android:textSize="16sp"
+        app:layout_constraintTop_toTopOf="@id/topGuide"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
+    <Button
+        android:id="@+id/buttonGetMovie"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="Отобразить любимый фильм"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/textViewMovie"
+        app:layout_constraintWidth_default="spread" />
+
+    <EditText
+        android:id="@+id/editTextMovie"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:hint="Заполни меня"
+        android:inputType="textCapSentences"
+        app:layout_constraintTop_toBottomOf="@id/buttonGetMovie"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="20dp"/>
+
+    <Button
+        android:id="@+id/buttonSaveMovie"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="Сохранить любимый фильм"
+        app:layout_constraintTop_toBottomOf="@id/editTextMovie"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="12dp"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
