@@ -1,3 +1,60 @@
 <resources>
     <string name="app_name">SkinCare</string>
+    <string name="cd_logo">Логотип</string>
+
+    <string name="login_title_big">Добро пожаловать</string>
+    <string name="login_subtitle">Войдите в свою учетную запись</string>
+
+    <string name="label_email">Электронная почта</string>
+    <string name="label_password">Пароль</string>
+
+    <string name="hint_email">Введите ваш email</string>
+    <string name="hint_password">Введите ваш пароль</string>
+
+    <string name="btn_login">Войти</string>
+    <string name="btn_guest">Продолжить как гость</string>
+
+    <!-- Для кликабельной фразы -->
+    <string name="register_prompt_prefix">У вас нет аккаунта? </string>
+    <string name="register_prompt_action">Зарегистрироваться</string>
+
+    <string name="enter_email_password">Введите почту и пароль</string>
+    <string name="error_fmt">Ошибка: %1$s</string>
+
+    <!-- Остальные (если используются где-то ещё) -->
+    <string name="login_ok_fmt">Login OK, token = %1$s</string>
+    <string name="products_fmt">Products: %1$d, first = %2$s</string>
+    <string name="by_id_ok">ById: %1$s</string>
+    <string name="by_id_not_found">ById: not found (%1$s)</string>
+
+    <string name="price_rub">%1$d ₽</string>
+    <string name="product_desc_placeholder">Описание для «%1$s» скоро появится.</string>
+
+    <string name="search_hint">Поиск по товарам</string>
+
+    <string name="title_products">Товары</string>
+    <string name="sort">Сортировать</string>
+    <string name="grid">Сетка</string>
+    <string name="list">Список</string>
+    <string name="product_details_title">Детали товара</string>
+    <string name="product_image">Фото товара</string>
+
+    <string name="sec_ingredients">Ключевые ингредиенты</string>
+    <string name="sec_howto">Как использовать</string>
+    <string name="sec_forwhom">Для кого это</string>
+
+    <string name="demo_ingredients">Витамин C, гиалуроновая кислота, ниацинамид.</string>
+    <string name="demo_howto">Наносите 2–3 капли на очищенную кожу утром/вечером, затем увлажняющий крем.</string>
+    <string name="demo_forwhom">Подходит для всех типов кожи, особенно тусклой и с неровным тоном.</string>
+
+    <string name="my_favorites_title">Моё избранное</string>
+    <string name="favorite">Избранное</string>
+
+    <string name="scan_title">Анализ кожи</string>
+    <string name="scan_headline">Определите свой\nуникальный тип кожи</string>
+    <string name="scan_subtitle">Для достижения наилучших результатов убедитесь, что вы находитесь в хорошо освещённом месте, без макияжа, и сфокусируйтесь на определённом участке кожи.</string>
+    <string name="scan_pick">Загрузить фото из галереи</string>
+    <string name="scan_camera">Сделать фото с помощью камеры</string>
+    <string name="scan_result_placeholder">Ваш анализ появится здесь.</string>
+    <string name="scan_disclaimer">Отказ от ответственности: этот анализ является рекомендацией, а не медицинским диагнозом. Пожалуйста, проконсультируйтесь с дерматологом для получения медицинских рекомендаций.</string>
 </resources>

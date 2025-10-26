@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "601994586159",
+    "project_id": "mobiledevelopment011",
+    "storage_bucket": "mobiledevelopment011.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:601994586159:android:bebc68ff2a58cef82cfeda",
+        "android_client_info": {
+          "package_name": "ru.mirea.golysheva.skincare"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB7_rRG7cdFK5ZRORv-e6gloxXqQRrg7Ng"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

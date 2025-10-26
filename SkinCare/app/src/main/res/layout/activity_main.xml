@@ -1,62 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
+<androidx.coordinatorlayout.widget.CoordinatorLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:padding="24dp"
-    tools:context=".presentation.MainActivity">
+    android:layout_height="match_parent">
 
-    <TextView
-        android:id="@+id/textView"
-        android:layout_width="0dp"
+    <FrameLayout
+        android:id="@+id/container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fitsSystemWindows="true"/>
+
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/bottomBar"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Готово к тестам"
-        android:textSize="16sp"
-        android:textAlignment="center"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        android:layout_gravity="bottom"
 
-    <Button
-        android:id="@+id/btnLogin"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:text="Войти"
-        app:layout_constraintTop_toBottomOf="@id/textView"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="12dp" />
+        android:background="@color/bnav_bg"
 
-    <Button
-        android:id="@+id/btnList"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:text="Список товаров"
-        app:layout_constraintTop_toBottomOf="@id/btnLogin"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="12dp" />
+        android:elevation="4dp"
+        android:translationZ="4dp"
 
-    <Button
-        android:id="@+id/btnById"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:text="Товар по ID"
-        app:layout_constraintTop_toBottomOf="@id/btnList"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="12dp" />
-
-    <Button
-        android:id="@+id/btnDetect"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:text="Определить тип кожи"
-        app:layout_constraintTop_toBottomOf="@id/btnById"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="12dp" />
-
-</androidx.constraintlayout.widget.ConstraintLayout>
+        app:menu="@menu/menu_bottom"
+        app:labelVisibilityMode="labeled" />
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

@@ -1,5 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="black">#FF000000</color>
-    <color name="white">#FFFFFFFF</color>
+    <color name="sc_primary">#A9D9DF</color>        <!-- светлый бирюзовый (кнопка Войти) -->
+    <color name="sc_primary_on">#FFFFFF</color>
+    <color name="sc_primary_variant">#7FC5CD</color>
+
+    <color name="sc_outline">#A9D9DF</color>        <!-- обводка для кнопки-гостя -->
+    <color name="sc_text_main">#222222</color>
+    <color name="sc_text_muted">#6B7280</color>
+    <color name="sc_bg">#FAFAFA</color>
+
+    <color name="bnav_bg">#FFFFFFFF</color>
+
+    <color name="sc_input_bg">#FFFFFFFF</color>
+    <color name="sc_input_stroke">#E5E7EB</color>
+
+    <color name="sc_link">#7FC5CD</color>
+
+    <color name="sc_field_bg">#FFFFFFFF</color>
+
+    <color name="sc_chip_bg">#EAF4FF</color>
+
+    <color name="sc_divider">#6FAEFF</color>
+    <color name="sc_icon">#EDA2F6EC</color>
+    <color name="sc_surface">#FFFFFF</color>
+    <color name="bnv_active_pill">#7FC5CD</color>
+
+    <color name="heart_red">#FF3B30</color>
 </resources>
+

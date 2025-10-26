@@ -1,0 +1,6 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:id="@+id/nav_home"     android:icon="@drawable/home"     android:title="Главная"/>
+    <item android:id="@+id/nav_catalog"  android:icon="@drawable/store"    android:title="Каталог"/>
+    <item android:id="@+id/nav_scan"     android:icon="@drawable/face_3"     android:title="Сканировать"/>
+    <item android:id="@+id/nav_fav"      android:icon="@drawable/favorite"      android:title="Избранное"/>
+</menu>

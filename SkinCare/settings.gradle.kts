@@ -21,4 +21,5 @@ dependencyResolutionManagement {
 
 rootProject.name = "SkinCare"
 include(":app")
- 
+include(":domain")
+include(":data")
