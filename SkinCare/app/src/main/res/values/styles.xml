@@ -1,5 +1,4 @@
 <resources>
-    <!-- Primary button "Войти" -->
     <style name="Widget.SkinCare.PrimaryButton" parent="Widget.Material3.Button">
         <item name="android:insetTop">0dp</item>
         <item name="android:insetBottom">0dp</item>
@@ -8,7 +7,6 @@
         <item name="android:textColor">@android:color/white</item>
     </style>
 
-    <!-- Outlined button "Гость" -->
     <style name="Widget.SkinCare.OutlinedButton" parent="Widget.Material3.Button.OutlinedButton">
         <item name="android:insetTop">0dp</item>
         <item name="android:insetBottom">0dp</item>
@@ -18,7 +16,6 @@
         <item name="android:textColor">@color/sc_primary</item>
     </style>
 
-    <!-- TextInput -->
     <style name="Widget.SkinCare.TextInput" parent="Widget.Material3.TextInputLayout.FilledBox">
         <item name="boxBackgroundColor">@color/sc_field_bg</item>
         <item name="boxCornerRadiusTopStart">12dp</item>

@@ -11,7 +11,7 @@ public class SkincareApp extends Application {
 
     @Override public void onCreate() {
         super.onCreate();
-        AppDatabase db = AppDatabase.getInstance(this); // <-- вместо create()
+        AppDatabase db = AppDatabase.getInstance(this);
         productRepo = new ProductRepositoryImpl(db, new FakeNetworkApi());
     }
 

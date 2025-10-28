@@ -1,4 +1,4 @@
-// domain/usecases/RegisterUser.java
+
 package ru.mirea.golysheva.domain.usecases;
 
 import ru.mirea.golysheva.domain.repository.AuthRepository;

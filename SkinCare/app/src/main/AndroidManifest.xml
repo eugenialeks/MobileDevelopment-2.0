@@ -10,7 +10,6 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.SkinCare">
 
-        <!-- Стартовая -->
         <activity
             android:name=".presentation.LoginActivity"
             android:exported="true">

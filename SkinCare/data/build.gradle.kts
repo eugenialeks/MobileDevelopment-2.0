@@ -29,7 +29,9 @@ android {
 
 dependencies {
     implementation(project(":domain"))
-
+    implementation ("com.squareup.retrofit2:retrofit:2.11.0")
+    implementation ("com.squareup.retrofit2:converter-gson:2.11.0")
+    implementation ("com.squareup.okhttp3:logging-interceptor:4.12.0")
     // Аннотации (как было)
     implementation("androidx.annotation:annotation:1.8.1")
     implementation(libs.firebase.auth)

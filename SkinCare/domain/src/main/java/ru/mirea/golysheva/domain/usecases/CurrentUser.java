@@ -10,6 +10,6 @@ public class CurrentUser {
     public CurrentUser(AuthRepository repo) { this.repo = repo; }
 
     public User execute() {
-        return repo.currentUser(); // может вернуть null, если не авторизован
+        return repo.currentUser();
     }
 }

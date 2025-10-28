@@ -57,11 +57,9 @@ public class LoginActivity extends AppCompatActivity {
         btnGuest    = findViewById(R.id.btnGuest);
         tvRegister  = findViewById(R.id.tvRegister);
 
-        // кнопки
         btnLogin.setOnClickListener(v -> doLogin());
         btnGuest.setOnClickListener(v -> doGuest());
 
-        // кликабельное "Зарегистрироваться"
         setupRegisterLink();
     }
 
@@ -78,8 +76,8 @@ public class LoginActivity extends AppCompatActivity {
             }
             @Override public void updateDrawState(@NonNull android.text.TextPaint ds) {
                 super.updateDrawState(ds);
-                ds.setColor(linkColor);      // цвет «Зарегистрироваться»
-                ds.setUnderlineText(true);   // подчёркивание как на макете (можно false, если не нужно)
+                ds.setColor(linkColor);
+                ds.setUnderlineText(true);
             }
         };
 
@@ -89,7 +87,7 @@ public class LoginActivity extends AppCompatActivity {
 
         tvRegister.setText(sp, TextView.BufferType.SPANNABLE);
         tvRegister.setMovementMethod(LinkMovementMethod.getInstance());
-        tvRegister.setHighlightColor(0x00000000); // без серой подсветки при клике
+        tvRegister.setHighlightColor(0x00000000);
     }
 
     private void doLogin() {
@@ -110,7 +108,6 @@ public class LoginActivity extends AppCompatActivity {
         final String pass  = txt(etPassword);
         registerUC.execute(email, pass, new AuthRepository.Callback() {
             @Override public void onSuccess(User user) {
-                // сразу логиним по тем же данным
                 loginUC.execute(email, pass, new AuthRepository.Callback() {
                     @Override public void onSuccess(User u) { goHome(); }
                     @Override public void onError(Throwable t) { onFail(t); }
@@ -128,7 +125,6 @@ public class LoginActivity extends AppCompatActivity {
         });
     }
 
-    // --- helpers ---
     private boolean validateInputs() {
         clearErrors();
         String email = txt(etEmail);

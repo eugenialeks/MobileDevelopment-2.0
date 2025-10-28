@@ -2,6 +2,7 @@ package ru.mirea.golysheva.skincare.presentation;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,24 +10,23 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import java.util.ArrayList;
 import java.util.List;
 
-import ru.mirea.golysheva.data.repository.ProductRepositoryImpl;
-import ru.mirea.golysheva.data.storage.favorite.AppDatabase;
-import ru.mirea.golysheva.data.storage.network.FakeNetworkApi;
-import ru.mirea.golysheva.data.storage.network.NetworkApi;
 import ru.mirea.golysheva.domain.models.Product;
-import ru.mirea.golysheva.domain.repository.ProductRepository;
-import ru.mirea.golysheva.domain.usecases.products.GetProductList;
 import ru.mirea.golysheva.skincare.R;
+import ru.mirea.golysheva.skincare.presentation.catalog.CatalogViewModel;
+import ru.mirea.golysheva.skincare.presentation.catalog.CatalogVmFactory;
 
 public class CatalogFragment extends Fragment {
 
+    private static final String TAG = "CatalogFragment";
     private static final String ARG_CAT = "arg_category_id";
+    private CatalogViewModel viewModel;
+    private ProductAdapter adapter;
 
     public static CatalogFragment newInstance(@Nullable String categoryId) {
         CatalogFragment f = new CatalogFragment();
@@ -38,47 +38,63 @@ public class CatalogFragment extends Fragment {
 
     @Nullable
     @Override
-    public View onCreateView(@NonNull LayoutInflater i,
-                             @Nullable ViewGroup c,
-                             @Nullable Bundle b) {
+    public View onCreateView(@NonNull LayoutInflater i, @Nullable ViewGroup c, @Nullable Bundle b) {
+        Log.d(TAG, "onCreateView вызван");
         return i.inflate(R.layout.fragment_catalog, c, false);
     }
 
     @Override
     public void onViewCreated(@NonNull View v, @Nullable Bundle b) {
+        super.onViewCreated(v, b);
+        Log.d(TAG, "onViewCreated вызван");
+
         RecyclerView rv = v.findViewById(R.id.rv);
         rv.setLayoutManager(new GridLayoutManager(getContext(), 2));
 
-        v.findViewById(R.id.btnSearch).setOnClickListener(view ->
-                startActivity(new Intent(requireContext(), SearchActivity.class)));
+        Log.d(TAG, "Создание CatalogViewModel");
+        viewModel = new ViewModelProvider(this, new CatalogVmFactory(requireContext())).get(CatalogViewModel.class);
 
-        String cat = getArguments() != null ? getArguments().getString(ARG_CAT) : null;
+        Log.d(TAG, "Тестирование ViewModel: " + viewModel.getDebugInfo());
 
-        new Thread(() -> {
-            AppDatabase db = AppDatabase.getInstance(requireContext());
-            NetworkApi api = new FakeNetworkApi();
-            ProductRepository repo = new ProductRepositoryImpl(db, api);
+        viewModel.products.observe(getViewLifecycleOwner(), products -> {
+            Log.d(TAG, "LiveData обновлена! Количество продуктов: " + products.size());
 
-            List<Product> list = new GetProductList(repo).execute();
-
-            if (cat != null && !cat.isEmpty()) {
-                List<Product> filtered = new ArrayList<>();
-                for (Product p : list) {
-                    if (cat.equalsIgnoreCase(p.getCategoryId())) filtered.add(p);
-                }
-                list = filtered;
-            }
-
-            List<Product> finalList = list;
-
-            requireActivity().runOnUiThread(() -> {
-                ProductAdapter adapter = new ProductAdapter(p -> {
+            if (adapter == null) {
+                Log.d(TAG, "Создание ProductAdapter");
+                adapter = new ProductAdapter(p -> {
+                    Log.d(TAG, "Продукт нажат: " + p.getName());
                     int imgRes = ProductImages.of(p.getImageResName());
                     startActivity(ProductDetailsActivity.intent(requireContext(), p.getId(), imgRes));
                 });
                 rv.setAdapter(adapter);
-                adapter.submit(finalList);
-            });
-        }).start();
+            }
+            adapter.submit(products);
+            Log.d(TAG, "UI обновлен с " + products.size() + " продуктами");
+        });
+
+        viewModel.isLoading.observe(getViewLifecycleOwner(), isLoading -> {
+            Log.d(TAG, "Состояние загрузки: " + isLoading);
+        });
+
+        viewModel.error.observe(getViewLifecycleOwner(), error -> {
+            if (error != null) {
+                Log.e(TAG, "Наблюдаемая ошибка: " + error);
+            }
+        });
+
+        v.findViewById(R.id.btnSearch).setOnClickListener(view -> {
+            Log.d(TAG, "Кнопка поиска нажата");
+            startActivity(new Intent(requireContext(), SearchActivity.class));
+        });
+
+        String categoryId = getArguments() != null ? getArguments().getString(ARG_CAT) : null;
+        Log.d(TAG, "Загрузка продуктов для категории: " + (categoryId != null ? categoryId : "все"));
+        viewModel.loadProducts(categoryId);
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        Log.d(TAG, "onDestroyView вызван");
     }
 }

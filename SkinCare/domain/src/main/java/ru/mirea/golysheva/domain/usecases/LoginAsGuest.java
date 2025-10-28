@@ -10,6 +10,6 @@ public class LoginAsGuest {
     }
 
     public void execute(AuthRepository.Callback cb) {
-        repo.loginAnonymously(cb); // <-- было loginAsGuest(cb)
+        repo.loginAnonymously(cb);
     }
 }

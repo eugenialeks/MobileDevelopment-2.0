@@ -6,7 +6,6 @@
     android:layout_height="match_parent"
     android:background="@color/sc_bg">
 
-    <!-- если у тебя тулбар рисуется в Activity — этот блок можно убрать -->
     <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
@@ -36,14 +35,12 @@
             android:paddingStart="20dp"
             android:paddingEnd="20dp">
 
-            <!-- Блок иллюстрации -->
             <FrameLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="24dp"
                 android:gravity="center">
 
-                <!-- КРУГЛАЯ картинка поверх кольца -->
                 <com.google.android.material.imageview.ShapeableImageView
                     android:id="@+id/ivPreview"
                     android:layout_width="220dp"
@@ -56,7 +53,6 @@
                     android:layout_gravity="center"/>
             </FrameLayout>
 
-            <!-- Заголовок -->
             <TextView
                 android:id="@+id/tvTitle"
                 android:layout_width="match_parent"
@@ -68,7 +64,6 @@
                 android:textSize="28sp"
                 android:gravity="center"/>
 
-            <!-- Подзаголовок -->
             <TextView
                 android:id="@+id/tvSubtitle"
                 android:layout_width="match_parent"
@@ -80,7 +75,6 @@
                 android:lineSpacingExtra="2dp"
                 android:gravity="center"/>
 
-            <!-- Кнопки -->
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnPick"
                 style="@style/Widget.SkinCare.PrimaryButton"

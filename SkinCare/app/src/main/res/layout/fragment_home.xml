@@ -13,7 +13,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <!-- Top bar -->
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/topBar"
             android:layout_width="match_parent"
@@ -56,7 +55,6 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="12dp"/>
 
-        <!-- grid 2x2 с карточками категорий -->
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rvCategories"
             android:layout_width="match_parent"
@@ -66,29 +64,83 @@
             app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
             app:spanCount="2"/>
 
-        <!-- Совет дня -->
         <LinearLayout
+            android:id="@+id/weatherCard"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:padding="16dp"
+            android:layout_marginTop="16dp"
             android:background="@drawable/bg_tip"
-            android:layout_marginTop="16dp">
+            android:padding="16dp"
+            android:orientation="horizontal">
 
-            <TextView
-                android:text="Совет дня по уходу за кожей"
-                android:textStyle="bold"
-                android:textColor="@color/sc_text_main"
-                android:textSize="18sp"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"/>
-            <TextView
-                android:id="@+id/tvTip"
-                android:textSize="16sp"
-                android:textColor="@color/sc_text_muted"
-                android:layout_marginTop="8dp"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"/>
+            <ImageView
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:src="@drawable/sun" />
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="12dp"
+                android:orientation="vertical"
+                android:layout_weight="1">
+
+                <TextView
+                    android:id="@+id/tvWeatherTitle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Погода"
+                    android:textStyle="bold"
+                    android:textSize="18sp"
+                    android:textColor="@color/sc_text_main" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textStyle="bold"
+                    android:textColor="@color/sc_text_main"
+                    android:text="Температура:"/>
+
+                <TextView
+                    android:id="@+id/tvTempValue"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/sc_text_main"
+                    android:layout_marginTop="2dp"
+                    android:text="—"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="6dp"
+                    android:textStyle="bold"
+                    android:textColor="@color/sc_text_main"
+                    android:text="УФ-индекс:"/>
+
+                <TextView
+                    android:id="@+id/tvUvValue"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/sc_text_main"
+                    android:layout_marginTop="2dp"
+                    android:text="—"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="6dp"
+                    android:textStyle="bold"
+                    android:textColor="@color/sc_text_main"
+                    android:text="Совет:"/>
+
+                <TextView
+                    android:id="@+id/tvAdviceText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/sc_text_muted"
+                    android:layout_marginTop="2dp"
+                    android:text="Загружаем..."/>
+            </LinearLayout>
         </LinearLayout>
 
     </LinearLayout>

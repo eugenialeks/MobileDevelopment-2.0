@@ -20,31 +20,22 @@ public class FavoritesRepository {
         this.sp = ctx.getSharedPreferences(PREFS, Context.MODE_PRIVATE);
     }
 
-    /** Синхронно прочитать набор id */
     private Set<String> read() {
-        // Всегда возвращаем копию, иначе StringSet из SharedPreferences нельзя модифицировать напрямую
         return new HashSet<>(sp.getStringSet(KEY_IDS, Collections.emptySet()));
     }
 
-    /** Сохранить набор id */
     private void write(Set<String> ids) {
         sp.edit().putStringSet(KEY_IDS, ids).apply();
     }
 
-    /** Асинхронная обёртка, как у тебя использовалось раньше */
     public void getAll(IdsCallback cb) {
         cb.onResult(read());
     }
 
-    /** Проверка, есть ли товар в избранном */
     public boolean contains(String id) {
         return read().contains(id);
     }
 
-    /**
-     * Переключить состояние избранного.
-     * @return true — стал избранным; false — убран из избранного.
-     */
     public boolean toggle(String id) {
         Set<String> ids = read();
         boolean nowFav;

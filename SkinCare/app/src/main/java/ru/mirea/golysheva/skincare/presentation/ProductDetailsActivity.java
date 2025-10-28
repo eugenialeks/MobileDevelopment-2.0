@@ -10,26 +10,29 @@ import android.widget.TextView;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.ViewModelProvider;
 
 import com.google.android.material.appbar.MaterialToolbar;
 
-import ru.mirea.golysheva.data.repository.FavoritesRepository;
+import ru.mirea.golysheva.domain.models.Product;
 import ru.mirea.golysheva.skincare.R;
+import ru.mirea.golysheva.skincare.presentation.details.ProductDetailsViewModel;
+import ru.mirea.golysheva.skincare.presentation.details.ProductDetailsVmFactory;
 
 public class ProductDetailsActivity extends AppCompatActivity {
 
     private static final String EXTRA_ID = "id";
     private static final String EXTRA_IMG_RES = "img_res";
 
+    private ProductDetailsViewModel viewModel;
+    private String productId;
+    private MenuItem favItem;
+
     public static Intent intent(Context c, String id, int imgRes) {
         return new Intent(c, ProductDetailsActivity.class)
                 .putExtra(EXTRA_ID, id)
                 .putExtra(EXTRA_IMG_RES, imgRes);
     }
-
-    private String productId;
-    private FavoritesRepository favorites;
-    private MenuItem favItem;
 
     @Override protected void onCreate(@Nullable Bundle b) {
         super.onCreate(b);
@@ -42,38 +45,44 @@ public class ProductDetailsActivity extends AppCompatActivity {
         productId = getIntent().getStringExtra(EXTRA_ID);
         int imgRes = getIntent().getIntExtra(EXTRA_IMG_RES, R.drawable.ic_placeholder);
 
-        favorites = new FavoritesRepository(this);
+        // Инициализация ViewModel
+        viewModel = new ViewModelProvider(this,
+                new ProductDetailsVmFactory(this)).get(ProductDetailsViewModel.class);
 
         ImageView iv = findViewById(R.id.img);
-        iv.setImageResource(imgRes); // показ сразу
+        iv.setImageResource(imgRes);
 
-        TextView tvName  = findViewById(R.id.name);
+        TextView tvName = findViewById(R.id.name);
         TextView tvPrice = findViewById(R.id.price);
-        TextView tvDesc  = findViewById(R.id.desc);
+        TextView tvDesc = findViewById(R.id.desc);
 
-        // Загрузка данных (как было)
-        new Thread(() -> {
-            ru.mirea.golysheva.domain.repository.ProductRepository repo =
-                    new ru.mirea.golysheva.data.repository.ProductRepositoryImpl(
-                            ru.mirea.golysheva.data.storage.favorite.AppDatabase.getInstance(this),
-                            new ru.mirea.golysheva.data.storage.network.FakeNetworkApi()
-                    );
+        // Наблюдение за данными
+        viewModel.product.observe(this, product -> {
+            if (product != null) {
+                tvName.setText(product.getName());
+                tvPrice.setText(product.getPrice() + " ₽");
+                tvDesc.setText(product.getDescription());
+            }
+        });
 
-            ru.mirea.golysheva.domain.models.Product p =
-                    new ru.mirea.golysheva.domain.usecases.products.GetProductById(repo)
-                            .execute(productId);
+        viewModel.isFavorite.observe(this, isFavorite -> {
+            if (favItem != null) {
+                favItem.setIcon(isFavorite ? R.drawable.ic_heart_filled : R.drawable.favorite);
+            }
+        });
 
-            runOnUiThread(() -> {
-                if (p != null) {
-                    tvName.setText(p.getName());
-                    tvPrice.setText(p.getPrice() + " ₽");
-                    tvDesc.setText(p.getDescription());
-                    // если хочется заменить placeholder на «точную» картинку из имени:
-                    // int real = getResources().getIdentifier(p.getImageResName(),"drawable",getPackageName());
-                    // if (real != 0) iv.setImageResource(real);
-                }
-            });
-        }).start();
+        viewModel.isLoading.observe(this, isLoading -> {
+            // Показать/скрыть загрузку
+        });
+
+        viewModel.error.observe(this, error -> {
+            if (error != null) {
+                // Показать ошибку
+            }
+        });
+
+        // Загрузка данных
+        viewModel.loadProduct(productId);
 
         // Секции
         setupSection(findViewById(R.id.secIngredients),
@@ -90,19 +99,14 @@ public class ProductDetailsActivity extends AppCompatActivity {
     @Override public boolean onCreateOptionsMenu(android.view.Menu menu) {
         getMenuInflater().inflate(R.menu.menu_product_details, menu);
         favItem = menu.findItem(R.id.action_fav);
-        updateFavIcon();
-        favItem.setOnMenuItemClickListener(i -> { toggleFavorite(); return true; });
+
+        // Устанавливаем обработчик клика
+        favItem.setOnMenuItemClickListener(item -> {
+            viewModel.toggleFavorite(productId);
+            return true;
+        });
+
         return true;
-    }
-
-    private void updateFavIcon() {
-        boolean isFav = favorites.contains(productId);
-        favItem.setIcon(isFav ? R.drawable.ic_heart_filled : R.drawable.favorite);
-    }
-
-    private void toggleFavorite() {
-        boolean nowFav = favorites.toggle(productId);
-        favItem.setIcon(nowFav ? R.drawable.ic_heart_filled : R.drawable.favorite);
     }
 
     private void setupSection(android.view.View root, String title, String content) {

@@ -35,7 +35,6 @@ public class AuthRepositoryImpl implements AuthRepository {
         return new User(email, fu.getUid(), displayName);
     }
 
-    // ЕДИНАЯ сигнатура: 2 аргумента
     private void saveAndReturn(Task<AuthResult> task, Callback cb) {
         task.addOnSuccessListener(res -> {
             FirebaseUser fu = auth.getCurrentUser();

@@ -15,5 +15,5 @@ public interface AuthRepository {
     void logout();
 
     boolean isLoggedIn();
-    User currentUser();   // <— нужен для use-case CurrentUser
+    User currentUser();
 }

@@ -1,84 +1,87 @@
 package ru.mirea.golysheva.skincare.presentation;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.android.material.appbar.MaterialToolbar;
-
-import java.util.ArrayList;
 import java.util.List;
 
-import ru.mirea.golysheva.data.repository.FavoritesRepository;
-import ru.mirea.golysheva.data.repository.ProductRepositoryImpl;
-import ru.mirea.golysheva.data.storage.favorite.AppDatabase;
-import ru.mirea.golysheva.data.storage.network.FakeNetworkApi;
-import ru.mirea.golysheva.data.storage.network.NetworkApi;
+import com.google.android.material.appbar.MaterialToolbar;
+
 import ru.mirea.golysheva.domain.models.Product;
-import ru.mirea.golysheva.domain.repository.ProductRepository;
-import ru.mirea.golysheva.domain.usecases.products.GetProductList;
 import ru.mirea.golysheva.skincare.R;
+import ru.mirea.golysheva.skincare.presentation.favorites.FavoritesViewModel;
+import ru.mirea.golysheva.skincare.presentation.favorites.FavoritesVmFactory;
 
 public class FavoritesFragment extends Fragment {
 
-    public FavoritesFragment() { super(R.layout.fragment_favorites); }
-
-    private FavoritesRepository favorites;
+    private static final String TAG = "FavoritesFragment";
+    private FavoritesViewModel viewModel;
     private FavoritesAdapter adapter;
-    private final List<Product> allProducts = new ArrayList<>();
 
+    public FavoritesFragment() {
+        super(R.layout.fragment_favorites);
+        Log.d(TAG, "FavoritesFragment создан");
+    }
+
+    @Override
     public void onViewCreated(@NonNull View v, @Nullable Bundle b) {
+        super.onViewCreated(v, b);
+        Log.d(TAG, "onViewCreated вызван");
+
         MaterialToolbar tb = v.findViewById(R.id.toolbar);
-        tb.setNavigationOnClickListener(
-                click -> requireActivity().getOnBackPressedDispatcher().onBackPressed()
-        );
+        tb.setNavigationOnClickListener(click -> {
+            Log.d(TAG, "Кнопка назад нажата");
+            requireActivity().getOnBackPressedDispatcher().onBackPressed();
+        });
 
         RecyclerView rv = v.findViewById(R.id.rv);
         rv.setLayoutManager(new GridLayoutManager(getContext(), 2));
-        rv.setHasFixedSize(true);
 
-        int spacing = getResources().getDimensionPixelSize(R.dimen.grid_spacing_16);
-        rv.addItemDecoration(new GridSpacingDecoration(2, spacing, true));
+        Log.d(TAG, "Создание FavoritesViewModel");
+        viewModel = new ViewModelProvider(this,
+                new FavoritesVmFactory(requireContext())).get(FavoritesViewModel.class);
+
+        Log.d(TAG, "Тестирование ViewModel: " + viewModel.getDebugInfo());
 
         adapter = new FavoritesAdapter(
-                p -> startActivity(ProductDetailsActivity.intent(requireContext(), p.getId(),
-                        v.getResources().getIdentifier(
-                                p.getImageResName(), "drawable", requireContext().getPackageName()))),
+                p -> {
+                    Log.d(TAG, "Избранный продукт нажат: " + p.getName());
+                    startActivity(ProductDetailsActivity.intent(requireContext(), p.getId(),
+                            v.getResources().getIdentifier(
+                                    p.getImageResName(), "drawable", requireContext().getPackageName())));
+                },
                 (p, pos) -> {
-                    favorites.toggle(p.getId());
-                    bindFavorites();
+                    Log.d(TAG, "Переключение избранного для: " + p.getName());
+                    viewModel.toggleFavorite(p.getId());
                 }
         );
         rv.setAdapter(adapter);
 
-        favorites = new FavoritesRepository(requireContext());
+        viewModel.favoriteProducts.observe(getViewLifecycleOwner(), favorites -> {
+            Log.d(TAG, "MediatorLiveData скомбинировал избранные: " + favorites.size());
+            adapter.submit(favorites);
+            Log.d(TAG, "UI обновлен с " + favorites.size() + " избранными продуктами");
+        });
 
-        new Thread(() -> {
-            AppDatabase db = AppDatabase.getInstance(requireContext());
-            NetworkApi api = new FakeNetworkApi();
-            ProductRepository repo = new ProductRepositoryImpl(db, api);
-            List<Product> loaded = new GetProductList(repo).execute();
+        viewModel.isLoading.observe(getViewLifecycleOwner(), isLoading -> {
+            Log.d(TAG, "Состояние загрузки: " + isLoading);
+        });
 
-            requireActivity().runOnUiThread(() -> {
-                allProducts.clear();
-                allProducts.addAll(loaded);
-                bindFavorites();
-            });
-        }).start();
+        Log.d(TAG, "Загрузка данных избранных");
+        viewModel.loadData();
     }
 
-    private void bindFavorites() {
-        favorites.getAll(ids -> {
-            List<Product> onlyFav = new ArrayList<>();
-            for (Product p : allProducts) if (ids.contains(p.getId())) onlyFav.add(p);
-            requireActivity().runOnUiThread(() -> {
-                adapter.submit(onlyFav);
-            });
-        });
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        Log.d(TAG, "onDestroyView вызван");
     }
 }
