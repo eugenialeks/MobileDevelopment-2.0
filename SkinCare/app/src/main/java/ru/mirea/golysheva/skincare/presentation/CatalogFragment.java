@@ -14,9 +14,6 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import java.util.List;
-
-import ru.mirea.golysheva.domain.models.Product;
 import ru.mirea.golysheva.skincare.R;
 import ru.mirea.golysheva.skincare.presentation.catalog.CatalogViewModel;
 import ru.mirea.golysheva.skincare.presentation.catalog.CatalogVmFactory;
@@ -63,8 +60,8 @@ public class CatalogFragment extends Fragment {
                 Log.d(TAG, "Создание ProductAdapter");
                 adapter = new ProductAdapter(p -> {
                     Log.d(TAG, "Продукт нажат: " + p.getName());
-                    int imgRes = ProductImages.of(p.getImageResName());
-                    startActivity(ProductDetailsActivity.intent(requireContext(), p.getId(), imgRes));
+                    // Изменено: передаем URL изображения
+                    startActivity(ProductDetailsActivity.intent(requireContext(), p.getId(), p.getImageUrl()));
                 });
                 rv.setAdapter(adapter);
             }

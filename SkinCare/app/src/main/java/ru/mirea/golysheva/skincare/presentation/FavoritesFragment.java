@@ -11,11 +11,8 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import java.util.List;
-
 import com.google.android.material.appbar.MaterialToolbar;
 
-import ru.mirea.golysheva.domain.models.Product;
 import ru.mirea.golysheva.skincare.R;
 import ru.mirea.golysheva.skincare.presentation.favorites.FavoritesViewModel;
 import ru.mirea.golysheva.skincare.presentation.favorites.FavoritesVmFactory;
@@ -54,9 +51,7 @@ public class FavoritesFragment extends Fragment {
         adapter = new FavoritesAdapter(
                 p -> {
                     Log.d(TAG, "Избранный продукт нажат: " + p.getName());
-                    startActivity(ProductDetailsActivity.intent(requireContext(), p.getId(),
-                            v.getResources().getIdentifier(
-                                    p.getImageResName(), "drawable", requireContext().getPackageName())));
+                    startActivity(ProductDetailsActivity.intent(requireContext(), p.getId(), p.getImageUrl()));
                 },
                 (p, pos) -> {
                     Log.d(TAG, "Переключение избранного для: " + p.getName());

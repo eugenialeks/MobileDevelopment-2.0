@@ -8,7 +8,7 @@ import androidx.lifecycle.ViewModelProvider;
 
 import ru.mirea.golysheva.data.repository.ProductRepositoryImpl;
 import ru.mirea.golysheva.data.storage.favorite.AppDatabase;
-import ru.mirea.golysheva.data.storage.network.FakeNetworkApi;
+import ru.mirea.golysheva.data.storage.network.RetrofitNetworkApi;
 import ru.mirea.golysheva.domain.repository.ProductRepository;
 
 public class CatalogVmFactory implements ViewModelProvider.Factory {
@@ -26,7 +26,7 @@ public class CatalogVmFactory implements ViewModelProvider.Factory {
         if (modelClass.isAssignableFrom(CatalogViewModel.class)) {
             ProductRepository productRepo = new ProductRepositoryImpl(
                     AppDatabase.getInstance(context),
-                    new FakeNetworkApi()
+                    new RetrofitNetworkApi()
             );
             return (T) new CatalogViewModel(productRepo);
         }

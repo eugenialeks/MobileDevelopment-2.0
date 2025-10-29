@@ -12,7 +12,7 @@ import ru.mirea.golysheva.data.storage.models.ProductEntity;
                 ProductEntity.class,
                 ProductFavoriteEntity.class
         },
-        version = 4,
+        version = 6,
         exportSchema = false
 )
 public abstract class AppDatabase extends RoomDatabase {

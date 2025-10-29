@@ -9,6 +9,8 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -45,8 +47,11 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.VH> {
         h.tvName.setText(p.getName());
         h.tvPrice.setText(p.getPrice() + " ₽");
 
-        int resId = ProductImages.of(p.getImageResName());
-        h.img.setImageResource(resId);
+        Glide.with(h.itemView.getContext())
+                .load(p.getImageUrl())
+                .placeholder(R.drawable.ic_placeholder)
+                .error(R.drawable.ic_placeholder)
+                .into(h.img);
 
         h.itemView.setOnClickListener(v -> onItemClick.onItem(p));
     }

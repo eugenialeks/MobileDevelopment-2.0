@@ -12,9 +12,6 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import java.util.List;
-
-import ru.mirea.golysheva.domain.models.Product;
 import ru.mirea.golysheva.skincare.R;
 import ru.mirea.golysheva.skincare.presentation.search.SearchViewModel;
 import ru.mirea.golysheva.skincare.presentation.search.SearchVmFactory;
@@ -36,8 +33,7 @@ public class SearchActivity extends AppCompatActivity {
                 new SearchVmFactory(this)).get(SearchViewModel.class);
 
         adapter = new ProductAdapter(p -> {
-            int imgRes = ProductImages.of(p.getImageResName());
-            startActivity(ProductDetailsActivity.intent(this, p.getId(), imgRes));
+            startActivity(ProductDetailsActivity.intent(this, p.getId(), p.getImageUrl()));
         });
         rv.setAdapter(adapter);
 

@@ -1,9 +1,13 @@
 package ru.mirea.golysheva.data.repository;
 
+import android.util.Log;
+
+import androidx.annotation.Nullable;
+
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import androidx.annotation.Nullable;
 import ru.mirea.golysheva.data.storage.favorite.AppDatabase;
 import ru.mirea.golysheva.data.storage.favorite.ProductDao;
 import ru.mirea.golysheva.data.storage.models.ProductEntity;
@@ -22,7 +26,7 @@ public class ProductRepositoryImpl implements ProductRepository {
     }
 
     private static Product toDomain(ProductEntity e) {
-        return new Product(e.id, e.name, e.price, e.categoryId, e.imageResName, e.description);
+        return new Product(e.id, e.name, e.price, e.categoryId, e.imageUrl, e.description);
     }
     private static ProductEntity toEntity(Product p) {
         ProductEntity e = new ProductEntity();
@@ -30,7 +34,7 @@ public class ProductRepositoryImpl implements ProductRepository {
         e.name = p.getName();
         e.price = p.getPrice();
         e.categoryId = p.getCategoryId();
-        e.imageResName = p.getImageResName();
+        e.imageUrl = p.getImageUrl();
         e.description = p.getDescription();
         return e;
     }
@@ -44,11 +48,18 @@ public class ProductRepositoryImpl implements ProductRepository {
         return getProductListInternal(categoryId);
     }
 
-    // Общая реализация
     private List<Product> getProductListInternal(@Nullable String categoryIdOrNull) {
-        List<ProductEntity> toSave = new ArrayList<>();
-        for (Product p : api.fetchProducts()) toSave.add(toEntity(p));
-        dao.upsertAll(toSave);
+        try {
+            List<Product> fromApi = api.fetchProducts();
+            List<ProductEntity> toSave = new ArrayList<>();
+            for (Product p : fromApi) {
+                toSave.add(toEntity(p));
+            }
+            dao.upsertAll(toSave);
+            Log.d("ProductRepository", "Successfully fetched from network and saved to DB.");
+        } catch (IOException e) {
+            Log.e("ProductRepository", "Network error, loading from cache.", e);
+        }
 
         List<ProductEntity> fromDb = (categoryIdOrNull == null)
                 ? dao.getAll()
@@ -64,8 +75,15 @@ public class ProductRepositoryImpl implements ProductRepository {
         ProductEntity e = dao.getById(id);
         if (e != null) return toDomain(e);
 
-        Product fromNet = api.fetchById(id);
-        if (fromNet != null) dao.upsert(toEntity(fromNet));
-        return fromNet;
+        try {
+            Product fromNet = api.fetchById(id);
+            if (fromNet != null) {
+                dao.upsert(toEntity(fromNet));
+                return fromNet;
+            }
+        } catch (IOException ex) {
+            Log.e("ProductRepository", "Network error when fetching by ID.", ex);
+        }
+        return null;
     }
 }

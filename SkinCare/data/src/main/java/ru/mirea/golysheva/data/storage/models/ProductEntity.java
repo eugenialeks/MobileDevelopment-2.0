@@ -1,7 +1,6 @@
 package ru.mirea.golysheva.data.storage.models;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
@@ -11,7 +10,6 @@ public class ProductEntity {
     public String name;
     public int    price;
     public String categoryId;
-    public String imageResName;
+    public String imageUrl;
     public String description;
 }
-

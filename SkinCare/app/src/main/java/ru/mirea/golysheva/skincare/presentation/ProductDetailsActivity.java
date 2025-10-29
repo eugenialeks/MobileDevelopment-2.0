@@ -1,6 +1,5 @@
 package ru.mirea.golysheva.skincare.presentation;
 
-import android.animation.ObjectAnimator;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -12,9 +11,11 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.DecodeFormat;
+import com.bumptech.glide.request.target.Target;
 import com.google.android.material.appbar.MaterialToolbar;
 
-import ru.mirea.golysheva.domain.models.Product;
 import ru.mirea.golysheva.skincare.R;
 import ru.mirea.golysheva.skincare.presentation.details.ProductDetailsViewModel;
 import ru.mirea.golysheva.skincare.presentation.details.ProductDetailsVmFactory;
@@ -22,16 +23,16 @@ import ru.mirea.golysheva.skincare.presentation.details.ProductDetailsVmFactory;
 public class ProductDetailsActivity extends AppCompatActivity {
 
     private static final String EXTRA_ID = "id";
-    private static final String EXTRA_IMG_RES = "img_res";
+    private static final String EXTRA_IMG_URL = "img_url";
 
     private ProductDetailsViewModel viewModel;
     private String productId;
     private MenuItem favItem;
 
-    public static Intent intent(Context c, String id, int imgRes) {
+    public static Intent intent(Context c, String id, String imgUrl) {
         return new Intent(c, ProductDetailsActivity.class)
                 .putExtra(EXTRA_ID, id)
-                .putExtra(EXTRA_IMG_RES, imgRes);
+                .putExtra(EXTRA_IMG_URL, imgUrl);
     }
 
     @Override protected void onCreate(@Nullable Bundle b) {
@@ -43,20 +44,23 @@ public class ProductDetailsActivity extends AppCompatActivity {
         tb.setNavigationOnClickListener(v -> getOnBackPressedDispatcher().onBackPressed());
 
         productId = getIntent().getStringExtra(EXTRA_ID);
-        int imgRes = getIntent().getIntExtra(EXTRA_IMG_RES, R.drawable.ic_placeholder);
+        String imgUrl = getIntent().getStringExtra(EXTRA_IMG_URL);
 
-        // Инициализация ViewModel
         viewModel = new ViewModelProvider(this,
                 new ProductDetailsVmFactory(this)).get(ProductDetailsViewModel.class);
 
         ImageView iv = findViewById(R.id.img);
-        iv.setImageResource(imgRes);
+        Glide.with(this)
+                .load(imgUrl)
+                .override(Target.SIZE_ORIGINAL)
+                .format(DecodeFormat.PREFER_ARGB_8888)
+                .placeholder(R.drawable.ic_placeholder)
+                .into(iv);
 
         TextView tvName = findViewById(R.id.name);
         TextView tvPrice = findViewById(R.id.price);
         TextView tvDesc = findViewById(R.id.desc);
 
-        // Наблюдение за данными
         viewModel.product.observe(this, product -> {
             if (product != null) {
                 tvName.setText(product.getName());
@@ -72,19 +76,15 @@ public class ProductDetailsActivity extends AppCompatActivity {
         });
 
         viewModel.isLoading.observe(this, isLoading -> {
-            // Показать/скрыть загрузку
         });
 
         viewModel.error.observe(this, error -> {
             if (error != null) {
-                // Показать ошибку
             }
         });
 
-        // Загрузка данных
         viewModel.loadProduct(productId);
 
-        // Секции
         setupSection(findViewById(R.id.secIngredients),
                 getString(R.string.sec_ingredients),
                 getString(R.string.demo_ingredients));
@@ -100,7 +100,6 @@ public class ProductDetailsActivity extends AppCompatActivity {
         getMenuInflater().inflate(R.menu.menu_product_details, menu);
         favItem = menu.findItem(R.id.action_fav);
 
-        // Устанавливаем обработчик клика
         favItem.setOnMenuItemClickListener(item -> {
             viewModel.toggleFavorite(productId);
             return true;

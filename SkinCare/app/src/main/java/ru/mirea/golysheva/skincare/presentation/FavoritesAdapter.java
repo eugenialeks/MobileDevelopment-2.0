@@ -10,6 +10,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.google.android.material.card.MaterialCardView;
 
 import java.util.ArrayList;
@@ -52,10 +53,11 @@ public class FavoritesAdapter extends RecyclerView.Adapter<FavoritesAdapter.VH> 
         h.tvName.setText(p.getName());
         h.tvPrice.setText(p.getPrice() + " ₽");
 
-        int resId = h.itemView.getResources().getIdentifier(
-                p.getImageResName(), "drawable",
-                h.itemView.getContext().getPackageName());
-        h.img.setImageResource(resId != 0 ? resId : R.drawable.ic_placeholder);
+        Glide.with(h.itemView.getContext())
+                .load(p.getImageUrl())
+                .placeholder(R.drawable.ic_placeholder)
+                .error(R.drawable.ic_placeholder)
+                .into(h.img);
 
         boolean fav = FavoritesIconState.cacheContains(h.itemView.getContext(), p.getId());
 

@@ -39,12 +39,10 @@
             <com.google.android.material.imageview.ShapeableImageView
                 android:id="@+id/img"
                 android:layout_width="match_parent"
-                android:layout_height="240dp"
-                android:layout_marginTop="12dp"
-
+                android:layout_height="wrap_content"
                 android:adjustViewBounds="true"
-                android:scaleType="fitCenter"
-
+                android:maxHeight="240dp"
+                android:scaleType="centerInside"
                 app:contentPadding="8dp"
                 app:shapeAppearanceOverlay="@style/ShapeAppearanceOverlay.Rounded18"
                 app:strokeColor="@color/sc_outline"

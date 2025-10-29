@@ -9,7 +9,7 @@ import androidx.lifecycle.ViewModelProvider;
 import ru.mirea.golysheva.data.repository.FavoritesRepository;
 import ru.mirea.golysheva.data.repository.ProductRepositoryImpl;
 import ru.mirea.golysheva.data.storage.favorite.AppDatabase;
-import ru.mirea.golysheva.data.storage.network.FakeNetworkApi;
+import ru.mirea.golysheva.data.storage.network.RetrofitNetworkApi;
 import ru.mirea.golysheva.domain.repository.ProductRepository;
 
 public class FavoritesVmFactory implements ViewModelProvider.Factory {
@@ -27,7 +27,7 @@ public class FavoritesVmFactory implements ViewModelProvider.Factory {
         if (modelClass.isAssignableFrom(FavoritesViewModel.class)) {
             ProductRepository productRepo = new ProductRepositoryImpl(
                     AppDatabase.getInstance(context),
-                    new FakeNetworkApi()
+                    new RetrofitNetworkApi()
             );
             FavoritesRepository favoritesRepo = new FavoritesRepository(context);
             return (T) new FavoritesViewModel(productRepo, favoritesRepo);

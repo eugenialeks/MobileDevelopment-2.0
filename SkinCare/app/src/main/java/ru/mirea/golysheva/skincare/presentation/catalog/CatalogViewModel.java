@@ -1,9 +1,10 @@
 package ru.mirea.golysheva.skincare.presentation.catalog;
 
+import android.util.Log;
+
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
-import android.util.Log;
 
 import java.util.List;
 
@@ -27,49 +28,51 @@ public class CatalogViewModel extends ViewModel {
 
     public CatalogViewModel(ProductRepository productRepository) {
         this.productRepository = productRepository;
-        Log.d(TAG, "CatalogViewModel создан");
+        Log.d(TAG, "CatalogViewModel created");
     }
 
     @Override
     protected void onCleared() {
         super.onCleared();
-        Log.d(TAG, "CatalogViewModel уничтожен");
+        Log.d(TAG, "CatalogViewModel destroyed");
     }
 
     public void loadProducts(String categoryId) {
-        Log.d(TAG, "Загрузка продуктов, категория: " + (categoryId != null ? categoryId : "все"));
+        Log.d(TAG, "Loading products, category: " + (categoryId != null ? categoryId : "all"));
         _isLoading.setValue(true);
         _error.setValue(null);
 
         new Thread(() -> {
             try {
-                Log.d(TAG, "Начало загрузки данных в фоновом потоке");
-                List<Product> productList;
+                Log.d(TAG, "Starting data loading in background thread");
+                List<Product> productList; // Объявляем переменную здесь
+
                 if (categoryId != null && !categoryId.isEmpty()) {
                     productList = productRepository.getProductList(categoryId);
-                    Log.d(TAG, "Загружено продуктов категории: " + productList.size());
+                    Log.d(TAG, "Loaded category products: " + productList.size());
                 } else {
                     productList = new GetProductList(productRepository).execute();
-                    Log.d(TAG, "Загружено всех продуктов: " + productList.size());
+                    Log.d(TAG, "Loaded all products: " + productList.size());
                 }
+
                 _products.postValue(productList);
-                Log.d(TAG, "LiveData обновлена с " + productList.size() + " продуктами");
+                Log.d(TAG, "LiveData updated with " + productList.size() + " products");
             } catch (Exception e) {
-                Log.e(TAG, "Ошибка загрузки продуктов: " + e.getMessage(), e);
-                _error.postValue("Ошибка загрузки: " + e.getMessage());
+                Log.e(TAG, "Error loading products: " + e.getMessage(), e);
+                _error.postValue("Loading error: " + e.getMessage());
             } finally {
                 _isLoading.postValue(false);
-                Log.d(TAG, "Загрузка завершена");
+                Log.d(TAG, "Loading completed");
             }
         }).start();
     }
 
     public String getDebugInfo() {
         int productCount = _products.getValue() != null ? _products.getValue().size() : 0;
-        String debugInfo = "CatalogViewModel Debug - Продукты: " + productCount +
-                ", Загрузка: " + _isLoading.getValue() +
-                ", Ошибка: " + (_error.getValue() != null);
-        Log.d(TAG, "Отладка: " + debugInfo);
+        String debugInfo = "CatalogViewModel Debug - Products: " + productCount +
+                ", Loading: " + _isLoading.getValue() +
+                ", Error: " + (_error.getValue() != null);
+        Log.d(TAG, "Debug: " + debugInfo);
         return debugInfo;
     }
 }
