@@ -40,7 +40,17 @@
 
 ## Контрольное задание
 
+1. Настройка окружения: Добавление зависимостей `Retrofit`, `Gson` и `Glide` в `build.gradle.kts` и получение разрешения на доступ в интернет в `AndroidManifest.xml`.
+2. Обновление моделей данных: Модификация моделей `Product` (domain-слой) и `ProductEntity` (data-слой) для работы с URL изображений (`imageUrl`) вместо локальных ресурсов (imageResName).
+3. Создание сетевого слоя: Реализация Retrofit-клиента, интерфейса `ApiService` и класса `RetrofitNetworkApi`, который инкапсулирует логику выполнения сетевых запросов.
+4. Интеграция с репозиторием: Модификация `ProductRepositoryImpl` для использования `RetrofitNetworkApi`. Реализована логика кэширования: при успешном сетевом запросе данные сохраняются в локальную базу данных `Room`, а при ошибке сети приложение использует ранее сохраненные данные.
+5. Обновление UI-слоя: Адаптеры `ProductAdapter`, `FavoritesAdapter` и активити `ProductDetailsActivity` были обновлены для загрузки изображений по URL с помощью Glide.
 
+<img width="974" height="566" alt="image" src="https://github.com/user-attachments/assets/b80a71fc-35c3-4834-9330-daac322f9385" />
+
+<img width="974" height="579" alt="image" src="https://github.com/user-attachments/assets/d81310bb-834e-4733-a8fd-a6b688612fae" />
+
+<img width="974" height="574" alt="image" src="https://github.com/user-attachments/assets/878b15b4-109a-471b-bb2b-74a356bd444f" />
 
 ---
 
