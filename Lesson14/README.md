@@ -1,167 +1,190 @@
-# Практическая работа №12
+# Практическая работа №14
 
-**Тема:** Основные способы отображения списков в Android: `ScrollView`, `ListView`, `RecyclerView`
+**Тема:** Фрагменты. Жизненный цикл, навигация и способы обмена данными.
 
 ## Цель работы
 
-Изучение и практическое применение основных компонентов Android SDK, предназначенных для отображения списков данных: `ScrollView`, `ListView` и `RecyclerView`. Освоение современного подхода к построению пользовательского интерфейса с использованием архитектурного паттерна **MVVM** (на примере связки `ViewModel` и `LiveData`) для создания эффективных и масштабируемых приложений.
+Целью данной практической работы является получение комплексных знаний и практических навыков по использованию компонента `Fragment` в Android-приложениях. В ходе работы были изучены:
+
+- Жизненный цикл фрагментов и его связь с жизненным циклом `Activity`.
+- Способы добавления фрагментов и управление ими с помощью `FragmentManage`r.
+- Построение навигации между экранами, реализованными в виде фрагментов.
+- Современные подходы к организации обмена данными между фрагментами: `Bundle`, `ViewModel` с `LiveData` и `Fragment Result API`.
   
 ---
 
-## Реализация `ScrollViewApp`
+## Создание базового фрагмента и передача данных через `Bundle`
 
-1. В файле разметки activity_main.xml был создан корневой элемент `ScrollView`, содержащий `LinearLayout` с вертикальной ориентацией (`android:id="@+id/linear_layout_container"`).
-2. В `MainActivity.java` в цикле от 0 до 99 программно создавались `TextView` для каждого элемента списка.
-3. С помощью `LayoutInflater` для каждого `TextView` создавалось представление из отдельного XML-файла макета (`item_simple_text.xml`).
-4. Для вычисления значений прогрессии использовался класс `BigInteger`, так как стандартный long не вмещает такие большие числа (например, 2^99).
-5. Каждый созданный `TextView` добавлялся в `LinearLayout` с помощью метода `addView()`.
+Создать приложение, состоящее из одной `Activity` и одного `Fragment`. `Activity` должна была при создании фрагмента передать в него данные (номер студента по списку) с помощью объекта `Bundle`. Фрагмент должен был получить эти данные и отобразить их на экране.
 
-<img width="974" height="568" alt="image" src="https://github.com/user-attachments/assets/20372fe9-dacd-481d-a85d-381e5bc02255" />
+В `MainActivity` был создан `Bundle`, в который помещалось целочисленное значение. Этот Bundle передавался в качестве аргумента при добавлении фрагмента в `FragmentContainerView`.
 
-## Реализация `ListViewApp`
+```java
+// ...
+if (savedInstanceState == null) {
+    Bundle bundle = new Bundle();
+    // Пример номера студента
+    bundle.putInt("my_number_student", 15);
 
-1. В `activity_main.xml` был размещен компонент `ListView`.
-2. Создан класс-модель `Book.java` с полями title и author.
-3. Разработан кастомный макет для одного элемента списка `list_item_book.xml`, содержащий два `TextView` для названия и автора.
-4. Создан кастомный адаптер `BookAdapter`, унаследованный от `ArrayAdapter<Book>`. В методе `getView()` этого адаптера происходит привязка данных из объекта `Book`к `TextView` в макете элемента.
-5. В `MainActivity.java` был создан `ArrayList<Book>`, заполненный 30+ объектами. Экземпляр `BookAdapter` был создан и установлен для `ListView`.
+    getSupportFragmentManager().beginTransaction()
+            .setReorderingAllowed(true)
+            .add(R.id.fragment_container_view, BlankFragment.class, bundle)
+            .commit();
+}
+// ...
+```
 
-<img width="974" height="599" alt="image" src="https://github.com/user-attachments/assets/b1752653-cf86-4c93-a4f9-1aa227acc3f0" />
+`BlankFragment.java` (фрагмент кода):
 
-## Реализация `RecyclerView` с `ViewMode` и `LiveData`
+```java
+// ...
+@Override
+public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+    super.onViewCreated(view, savedInstanceState);
 
-1. Зависимости: В файл `build.gradle` были добавлены зависимости для `recyclerview`, `cardview`, `lifecycle-viewmodel` и `lifecycle-livedata`.
-2. Модель: Создан класс `HistoricalEvent.java` с полями для заголовка, описания и ID ресурса изображения.
-3. `View` (Разметка):
-  - `activity_main.xml` содержит только `RecyclerView`.
-  - `list_item_event.xml` описывает внешний вид одного элемента с помощью `CardView`, `ImageView` и двух `TextView`.
-4. `ViewModel`: Создан класс EventViewModel, унаследованный от `ViewModel`. В нем содержится `MutableLiveData<List<HistoricalEvent>>`, которая хранит список событий. Метод `loadHistoricalEvents()` имитирует загрузку данных и помещает их в `LiveData`.
-5. `Adapter`: Создан `EventAdapter`, унаследованный от `RecyclerView.Adapter`. В нем реализован обязательный вложенный класс `EventViewHolder`, который хранит ссылки на `View` элемента. В методе `onBindViewHolder` происходит привязка данных к элементам `ViewHolder`.
-6. `Activity`: `MainActivity.java` теперь выполняет роль контроллера:
-  - Инициализирует `RecyclerView` и `EventAdapter`.
-  - Получает экземпляр `EventViewModel` через `ViewModelProvider`.
-  - Подписывается на изменения `LiveData` с помощью метода `observe()`. В лямбда-выражении, которое срабатывает при обновлении данных, вызывается метод адаптера для установки нового списка (`adapter.setEvents(eventList)`).
-  - Вызывает метод `viewModel.loadHistoricalEvents()` для запуска загрузки данных.
+    Bundle args = getArguments();
+    if (args != null) {
+        int number = args.getInt("my_number_student", 0);
+        TextView textView = view.findViewById(R.id.fragment_text);
+        textView.setText("Номер студента: " + number);
+    }
+}
+// ...
+```
 
-<img width="974" height="572" alt="image" src="https://github.com/user-attachments/assets/2c738c96-f373-4463-b009-d46ba14fb3ae" />
+<img width="974" height="619" alt="image" src="https://github.com/user-attachments/assets/9a68c2ac-664f-47ec-b684-b8b1370def9a" />
+
+---
+
+## Навигация между списком и статичными деталями
+
+В `ListFragment` был создан `ListView`, заполненный массивом названий фильмов. В обработчике нажатий `setOnItemClickListener` была реализована транзакция `replace`, заменяющая один фрагмент на другой. Вызов `addToBackStack(null)` обеспечил корректную работу системной кнопки "назад".
+
+```java
+// ...
+listView.setOnItemClickListener((parent, itemView, position, id) -> {
+    getParentFragmentManager().beginTransaction()
+            .replace(R.id.fragment_container_view, DetailsFragment.class, null)
+            .setReorderingAllowed(true)
+            .addToBackStack(null)
+            .commit();
+});
+// ...
+```
+
+Приложение запускалось с экрана со списком фильмов. При нажатии на любой элемент списка открывался второй экран со статичной информацией.
+
+<img width="974" height="579" alt="image" src="https://github.com/user-attachments/assets/db766ae5-ef50-4753-ae9a-cef601409916" />
+
+<img width="974" height="581" alt="image" src="https://github.com/user-attachments/assets/c7a09374-b460-4a4e-99ba-9c79275f06a7" />
+
+---
+
+## Обмен данными между фрагментами через `ViewModel`
+
+Нужно было модифицировать предыдущее задание. Теперь `DetailsFragment` должен был отображать актуальную информацию о том фильме, который был выбран в `ListFragment`. Для обмена данными необходимо было использовать общую `MovieViewModel`.
+
+1. Был создан класс модели `Movie` для хранения данных о фильме.
+2. Также создан `MovieViewModel`, содержащий `MutableLiveData<Movie>`, для хранения состояния (выбранного фильма).
+3. `ListFragment` был обновлен: при нажатии на элемент списка он получал соответствующий объект `Movie` и передавал его в `ViewModel` через метод `viewModel.selectMovie(selectedMovie)`.
+4. `DetailsFragment` был обновлен: в методе `onViewCreated` он подписывался на `LiveData` из `ViewModel`. При любом изменении данных в `LiveData` (т.е. при выборе фильма) `TextView` на экране автоматически обновлялись.
+
+`MovieViewModel.java` (фрагмент кода):
+
+```java
+public class MovieViewModel extends ViewModel {
+    private final MutableLiveData<Movie> selectedMovie = new MutableLiveData<>();
+
+    public void selectMovie(Movie movie) {
+        selectedMovie.setValue(movie);
+    }
+
+    public LiveData<Movie> getSelectedMovie() {
+        return selectedMovie;
+    }
+}
+```
+
+`DetailsFragment.java` (фрагмент кода):
+
+```java
+// ...
+viewModel = new ViewModelProvider(requireActivity()).get(MovieViewModel.class);
+// ...
+viewModel.getSelectedMovie().observe(getViewLifecycleOwner(), movie -> {
+    if (movie != null) {
+        titleTextView.setText(movie.getTitle());
+        directorTextView.setText("Режиссер: " + movie.getDirector());
+        yearTextView.setText("Год выпуска: " + movie.getYear());
+    }
+});
+// ...
+```
+
+Теперь приложение корректно отображало информацию о любом выбранном фильме, демонстрируя реактивный подход к обновлению UI.
+
+<img width="974" height="581" alt="image" src="https://github.com/user-attachments/assets/f3d70074-0ed9-4476-87aa-e046bffd4e57" />
+
+<img width="2749" height="1555" alt="image" src="https://github.com/user-attachments/assets/3778e404-a477-4208-9752-c20b87912eff" />
+
+---
+
+## Передача одноразовых данных через Fragment Result API
+
+Нужно реализовать передачу данных от основного фрагмента (`DataFragment`) к диалоговому (`BottomSheetFragment`) с помощью `Fragment Result API`. `DataFragment` должен содержать поле для ввода текста и кнопку. При нажатии на кнопку должен открываться `BottomSheetFragment` и отображать введенный текст.
+
+1. `DataFragment` (Отправитель): В обработчике нажатия кнопки текст из `EditText` упаковывался в `Bundle`, который затем отправлялся через `getParentFragmentManager().setFragmentResult("requestKey", result)`.
+2. `BottomSheetFragment` (Получатель): В методе `onCreate` был установлен слушатель `getParentFragmentManager().setFragmentResultListener("requestKey", ...)`. Как только результат с нужным ключом устанавливался, слушатель срабатывал, извлекал данные из `Bundle` и обновлял `TextView` на своем экране.
+
+`DataFragment.java` (фрагмент кода)
+
+```java
+// ...
+button.setOnClickListener(v -> {
+    String text = editText.getText().toString();
+    Bundle result = new Bundle();
+    result.putString("key", text);
+    getParentFragmentManager().setFragmentResult("requestKey", result);
+
+    BottomSheetFragment bottomSheet = new BottomSheetFragment();
+    bottomSheet.show(getParentFragmentManager(), "ModalBottomSheet");
+});
+// ...
+```
+
+`BottomSheetFragment.java` (фрагмент кода)
+
+```java
+// ...
+@Override
+public void onCreate(@Nullable Bundle savedInstanceState) {
+    super.onCreate(savedInstanceState);
+    getParentFragmentManager().setFragmentResultListener("requestKey", this, (requestKey, bundle) -> {
+        String text = bundle.getString("key");
+        if (receivedDataTextView != null) {
+            receivedDataTextView.setText("Получено: " + text);
+        }
+    });
+}
+// ...
+```
+
+<img width="974" height="560" alt="image" src="https://github.com/user-attachments/assets/d7530cd8-f64a-4306-94c2-9265c3ee918b" />
+
 
 ---
 
 ## Контрольное задание
 
-### Создание заглушки с данными в Репозитории
-
-В модуле `:data` реализован класс-заглушка `FakeNetworkApi`, который имитирует получение данных из внешнего API. Этот класс содержит статический набор данных о продуктах.
-
-```java
-public class FakeNetworkApi implements NetworkApi {
-
-    private final List<Product> stub = new ArrayList<>();
-
-    public FakeNetworkApi() {
-        stub.add(new Product(
-                "1", "Hydrating Cleanser", 499, "clean", "prod_cleanser",
-                "Нежный очищающий гель для ежедневного ухода"
-        ));
-        stub.add(new Product(
-                "2", "Vitamin C Serum", 1299, "serum", "prod_serum",
-                "Сыворотка с витамином C для сияния и выравнивания тона кожи"
-        ));
-        stub.add(new Product(
-                "3", "SPF 50", 899, "spf", "prod_spf",
-                "Лёгкий солнцезащитный крем SPF 50 на каждый день"
-        ));
-    }
-
-    @Override
-    public List<Product> fetchProducts() {
-        return new ArrayList<>(stub); // Возвращается "заглушечный" список
-    }
-    // ...
-}
-```
-
-Этот класс используется в `ProductRepositoryImpl` в качестве источника данных.
-
-<img width="2718" height="1392" alt="image" src="https://github.com/user-attachments/assets/8bfc9136-8de2-4dda-9915-86a40ae1ab83" />
-
-### Передача данных в слой представления с помощью `LiveData`
-
-Для передачи данных из слоя данных в UI (фрагменты) используется связка `ViewModel` и `LiveData`.
-Во `ViewModel` (например, `CatalogViewModel`) создается `MutableLiveData`, которая обновляется после получения данных из репозитория. Фрагмент подписывается на изменения этой `LiveData` и автоматически обновляет UI.
-
-```java
-public class CatalogViewModel extends ViewModel {
-    // ...
-    private final MutableLiveData<List<Product>> _products = new MutableLiveData<>();
-    public final LiveData<List<Product>> products = _products;
-
-    public void loadProducts(String categoryId) {
-        new Thread(() -> {
-            try {
-                // ...
-                List<Product> productList = new GetProductList(productRepository).execute();
-                _products.postValue(productList); // Данные передаются в LiveData
-            } catch (Exception e) {
-                // ...
-            }
-        }).start();
-    }
-}
-```
-
-Подписка на `LiveData` во фрагменте `CatalogFragment`:
-
-```java
-viewModel.products.observe(getViewLifecycleOwner(), products -> {
-    // Этот код выполняется при каждом обновлении данных
-    adapter.submit(products);
-});
-```
-
-### Отображение данных в `RecyclerView`
-
-Данные, полученные через `LiveData`, отображаются в `RecyclerView` с помощью кастомного адаптера `ProductAdapter`.
-
-В `CatalogFragment` производится настройка `RecyclerView` и его адаптера. Метод `adapter.submit()` вызывается для обновления списка элементов, отображаемых на экране.
-
-```java
-public class CatalogFragment extends Fragment {
-    // ...
-    private ProductAdapter adapter;
-
-    @Override
-    public void onViewCreated(@NonNull View v, @Nullable Bundle b) {
-        // ...
-        RecyclerView rv = v.findViewById(R.id.rv);
-        rv.setLayoutManager(new GridLayoutManager(getContext(), 2));
-
-        // Создание и установка адаптера
-        adapter = new ProductAdapter(p -> { /* ... обработка клика ... */ });
-        rv.setAdapter(adapter);
-
-        // Обновление адаптера при получении данных из ViewModel
-        viewModel.products.observe(getViewLifecycleOwner(), products -> {
-            adapter.submit(products);
-        });
-
-        viewModel.loadProducts(categoryId);
-    }
-}
-```
-
-<img width="2723" height="1704" alt="image" src="https://github.com/user-attachments/assets/85bd8eec-32f4-489f-9dfd-aca1a9a1ae08" />
-
-
----
+--- 
 
 ## Итоги
 
-В ходе выполнения практической работы были изучены и применены на практике три основных способа отображения списков в Android.
-1. `ScrollView` является простым инструментом, подходящим только для небольших объемов статического контента. Его использование для динамических списков приводит к серьезным проблемам с производительностью.
-2. `ListView` представляет собой более совершенный механизм, однако для эффективной работы требует ручной оптимизации (паттерн ViewHolder) и является устаревшим.
-3. `RecyclerView` — это мощный, гибкий и производительный компонент, который является современным стандартом для создания любых списков. Он обеспечивает высокую производительность "из коробки" за счет принудительного использования `ViewHolder`.
-4. Использование архитектурного паттерна MVVM со связкой `ViewModel` и `LiveData` позволяет создавать надежные и легко поддерживаемые приложения. Такой подход эффективно решает проблемы жизненного цикла Android-компонентов и обеспечивает чистоту кода за счет разделения ответственностей.
+В результате выполнения данной практической работы были получине комплексные знания о работе с фрагментами и освоены три ключевых механизма обмена данными, каждый из которых подходит для своих задач:
+- `Bundle`: Идеален для передачи первоначальных данных при создании фрагмента.
+- `ViewModel` и `LiveData`: Мощный инструмент для организации общего состояния между несколькими фрагментами или между фрагментами и `Activity`. Обеспечивает сохранение состояния при смене конфигурации и позволяет строить реактивные UI.
+- `Fragment Result API`: Лучший выбор для передачи одноразовых, событийных данных (например, результат выбора в диалоге), так как он не создает сильной связи между компонентами.
+Полученные навыки позволяют проектировать модульные, гибкие и легко поддерживаемые Android-приложения, соответствующие современным стандартам разработки.
 
 ---
 
