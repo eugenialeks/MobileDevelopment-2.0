@@ -176,6 +176,25 @@ public void onCreate(@Nullable Bundle savedInstanceState) {
 
 ## Контрольное задание
 
+### Реализация экрана "Профиль" (Архитектура MVVM)
+
+Экран был построен в соответствии с принятой в проекте архитектурой MVVM.
+- `ViewModel` (`ProfileViewModel.java`):
+  - Отвечает за всю логику экрана: получение данных о текущем пользователе и обработку выхода.
+  - Содержит `LiveData<User>`, через которую передает данные пользователя во `Fragment`.
+  - Содержит `LiveData<Boolean>` для оповещения Fragment о том, что был выполнен выход из системы. Это позволяет отделить логику выхода от навигации.
+  - Использует `CurrentUser` и `LogoutUser` use-cases для взаимодействия с `AuthRepository`.
+- `View` (`ProfileFragment.java` и `fragment_profile.xml`):
+  - `ProfileFragment` подписывается на `LiveData` из `ProfileViewModel`. При получении данных о пользователе он обновляет `TextView` для имени и email.
+  - При срабатывании события выхода `logoutEvent` фрагмент выполняет переход на `LoginActivity`, используя флаги `Intent.FLAG_ACTIVITY_CLEAR_TASK` и `Intent.FLAG_ACTIVITY_NEW_TASK` для полной очистки стека экранов.
+  - Изначальная верстка на `LinearLayout` была заменена на `ConstraintLayout` для более надежного позиционирования элементов и решения проблемы с "пропавшей" кнопкой. Заголовок был вынесен в отдельный `TextView` внутри `Toolbar` для кастомизации (жирный шрифт, центрирование).
+ 
+- Меню навигации (`menu_bottom.xml`): В ресурсный файл меню был добавлен новый пункт `<item>` для "Профиля" с соответствующей иконкой и id.
+- Главная активность (`MainActivity.java`): Обработчик setOnItemSelectedListener для `BottomNavigationView` был расширен. В него добавлено условие `else if (id == R.id.nav_profile)`, которое создает экземпляр `ProfileFragment` и отображает его в контейнере `R.id.container`.
+- Бэк-стек: Навигация между основными разделами в `MainActivity` выполняется через метод replace() без вызова `addToBackStack()`. Это является стандартной практикой для `BottomNavigationView` и предотвращает наслоение главных экранов друг на друга при нажатии системной кнопки "Назад".
+
+<img width="974" height="580" alt="image" src="https://github.com/user-attachments/assets/814ec741-75de-4f5b-8879-1cded5646466" />
+
 --- 
 
 ## Итоги
