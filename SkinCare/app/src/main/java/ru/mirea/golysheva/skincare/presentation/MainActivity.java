@@ -14,14 +14,25 @@ public class MainActivity extends AppCompatActivity {
 
         BottomNavigationView bar = findViewById(R.id.bottomBar);
         bar.setOnItemSelectedListener(item -> {
-            Fragment f;
+            Fragment f = null;
             int id = item.getItemId();
-            if (id == R.id.nav_home)    f = new HomeFragment();
-            else if (id == R.id.nav_catalog) f = new CatalogFragment();
-            else if (id == R.id.nav_scan)    f = new ScanFragment();
-            else                             f = new FavoritesFragment();
-            getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.container, f).commit();
+
+            if (id == R.id.nav_home) {
+                f = new HomeFragment();
+            } else if (id == R.id.nav_catalog) {
+                f = new CatalogFragment();
+            } else if (id == R.id.nav_scan) {
+                f = new ScanFragment();
+            } else if (id == R.id.nav_fav) {
+                f = new FavoritesFragment();
+            } else if (id == R.id.nav_profile) {
+                f = new ProfileFragment();
+            }
+
+            if (f != null) {
+                getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.container, f).commit();
+            }
             return true;
         });
 

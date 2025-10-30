@@ -33,6 +33,7 @@ public class LoginActivity extends AppCompatActivity {
     private LoginUser loginUC;
     private RegisterUser registerUC;
     private LoginAsGuest guestUC;
+    private AuthRepository repo;
 
     private TextInputLayout tilEmail, tilPassword;
     private TextInputEditText etEmail, etPassword;
@@ -41,10 +42,16 @@ public class LoginActivity extends AppCompatActivity {
 
     @Override protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        repo = new AuthRepositoryImpl(new ClientPrefs(this));
+
+        if (repo.isLoggedIn()) {
+            goHome();
+            return;
+        }
+
         setContentView(R.layout.activity_login);
 
-        // DI
-        AuthRepository repo = new AuthRepositoryImpl(new ClientPrefs(this));
         loginUC    = new LoginUser(repo);
         registerUC = new RegisterUser(repo);
         guestUC    = new LoginAsGuest(repo);
@@ -63,6 +70,7 @@ public class LoginActivity extends AppCompatActivity {
         setupRegisterLink();
     }
 
+    // ... (остальной код класса без изменений)
     private void setupRegisterLink() {
         String prefix = getString(R.string.register_prompt_prefix);
         String action = getString(R.string.register_prompt_action);
