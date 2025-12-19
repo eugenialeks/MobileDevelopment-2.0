@@ -1,209 +1,72 @@
-# Практическая работа №14
+# Практическая работа №15
 
-**Тема:** Фрагменты. Жизненный цикл, навигация и способы обмена данными.
+**Тема:** Реализация навигации в Android-приложении (`Bottom Navigation`, `Navigation Drawer`, `Navigation Component`).
 
 ## Цель работы
 
-Целью данной практической работы является получение комплексных знаний и практических навыков по использованию компонента `Fragment` в Android-приложениях. В ходе работы были изучены:
-
-- Жизненный цикл фрагментов и его связь с жизненным циклом `Activity`.
-- Способы добавления фрагментов и управление ими с помощью `FragmentManage`r.
-- Построение навигации между экранами, реализованными в виде фрагментов.
-- Современные подходы к организации обмена данными между фрагментами: `Bundle`, `ViewModel` с `LiveData` и `Fragment Result API`.
+Изучить принципы построения навигации в Android, освоить работу с компонентами `BottomNavigationView` и `NavigationDrawer`, а также внедрить библиотеку `Android Jetpack Navigation Component` в основной проект.
   
 ---
 
-## Создание базового фрагмента и передача данных через `Bundle`
+## Реализация Bottom Navigation (Приложение «Кофе-Брейк»)
 
-Создать приложение, состоящее из одной `Activity` и одного `Fragment`. `Activity` должна была при создании фрагмента передать в него данные (номер студента по списку) с помощью объекта `Bundle`. Фрагмент должен был получить эти данные и отобразить их на экране.
+**Создание модуля:** Был создан новый модуль `BottomNavigationApp` с использованием шаблона `Bottom Navigation Views Activity`.
+**Настройка ресурсов:**
+- В `colors.xml` обновлена цветовая палитра на кофейные тона (коричневый, бежевый).
+- Добавлены векторные иконки (Vector Assets) для меню: чашка кофе, акция, корзина.
+**Настройка меню:** В файле `bottom_nav_menu.xml` пункты меню привязаны к новым иконкам и переименованы в «Меню», «Акции», «Корзина».
+**Реализация фрагментов:** Из классов фрагментов удалена шаблонная привязка к ViewModel, реализована прямая установка текста через XML-разметку.
 
-В `MainActivity` был создан `Bundle`, в который помещалось целочисленное значение. Этот Bundle передавался в качестве аргумента при добавлении фрагмента в `FragmentContainerView`.
+<img width="1280" height="796" alt="image" src="https://github.com/user-attachments/assets/d3e51803-adfe-4f27-8f56-a6740b82934b" />
 
-```java
-// ...
-if (savedInstanceState == null) {
-    Bundle bundle = new Bundle();
-    // Пример номера студента
-    bundle.putInt("my_number_student", 15);
+<img width="1280" height="796" alt="image" src="https://github.com/user-attachments/assets/6cb1f452-c872-45ee-98b0-3a5f13466f08" />
 
-    getSupportFragmentManager().beginTransaction()
-            .setReorderingAllowed(true)
-            .add(R.id.fragment_container_view, BlankFragment.class, bundle)
-            .commit();
-}
-// ...
-```
-
-`BlankFragment.java` (фрагмент кода):
-
-```java
-// ...
-@Override
-public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-    super.onViewCreated(view, savedInstanceState);
-
-    Bundle args = getArguments();
-    if (args != null) {
-        int number = args.getInt("my_number_student", 0);
-        TextView textView = view.findViewById(R.id.fragment_text);
-        textView.setText("Номер студента: " + number);
-    }
-}
-// ...
-```
-
-<img width="974" height="619" alt="image" src="https://github.com/user-attachments/assets/9a68c2ac-664f-47ec-b684-b8b1370def9a" />
+<img width="1280" height="806" alt="image" src="https://github.com/user-attachments/assets/ea9be8bb-a006-4d35-b3ce-4a9412cf486c" />
 
 ---
 
-## Навигация между списком и статичными деталями
+## Реализация Navigation Drawer (Приложение «Travel Guide»)
 
-В `ListFragment` был создан `ListView`, заполненный массивом названий фильмов. В обработчике нажатий `setOnItemClickListener` была реализована транзакция `replace`, заменяющая один фрагмент на другой. Вызов `addToBackStack(null)` обеспечил корректную работу системной кнопки "назад".
+**Создание модуля:** Создан модуль `NavigationDrawerApp`.
+**Дизайн:** Цветовая гамма изменена на «морскую» (синие и желтые оттенки).
+**Настройка Header:** В файле `nav_header_main.xml` изменен фон, установлено название приложения «Travel Guide» и email пользователя.
+**Меню шторки:** Добавлены пункты «Куда поехать», «Мои поездки», «Билеты» с соответствующими иконками.
+**Обработка навигации:** В `MainActivity` добавлен OnBackPressedCallback, который закрывает шторку при нажатии системной кнопки «Назад», вместо закрытия всего приложения.
 
-```java
-// ...
-listView.setOnItemClickListener((parent, itemView, position, id) -> {
-    getParentFragmentManager().beginTransaction()
-            .replace(R.id.fragment_container_view, DetailsFragment.class, null)
-            .setReorderingAllowed(true)
-            .addToBackStack(null)
-            .commit();
-});
-// ...
-```
+<img width="1280" height="795" alt="image" src="https://github.com/user-attachments/assets/f3c73759-9f5a-4078-b411-33ba2b220e83" />
 
-Приложение запускалось с экрана со списком фильмов. При нажатии на любой элемент списка открывался второй экран со статичной информацией.
+<img width="1280" height="798" alt="image" src="https://github.com/user-attachments/assets/ef943538-9ccc-419f-a2be-2d1af76fada7" />
 
-<img width="974" height="579" alt="image" src="https://github.com/user-attachments/assets/db766ae5-ef50-4753-ae9a-cef601409916" />
+<img width="1280" height="793" alt="image" src="https://github.com/user-attachments/assets/925159d5-23c4-4b03-9461-7d7f6ad88433" />
 
-<img width="974" height="581" alt="image" src="https://github.com/user-attachments/assets/c7a09374-b460-4a4e-99ba-9c79275f06a7" />
-
----
-
-## Обмен данными между фрагментами через `ViewModel`
-
-Нужно было модифицировать предыдущее задание. Теперь `DetailsFragment` должен был отображать актуальную информацию о том фильме, который был выбран в `ListFragment`. Для обмена данными необходимо было использовать общую `MovieViewModel`.
-
-1. Был создан класс модели `Movie` для хранения данных о фильме.
-2. Также создан `MovieViewModel`, содержащий `MutableLiveData<Movie>`, для хранения состояния (выбранного фильма).
-3. `ListFragment` был обновлен: при нажатии на элемент списка он получал соответствующий объект `Movie` и передавал его в `ViewModel` через метод `viewModel.selectMovie(selectedMovie)`.
-4. `DetailsFragment` был обновлен: в методе `onViewCreated` он подписывался на `LiveData` из `ViewModel`. При любом изменении данных в `LiveData` (т.е. при выборе фильма) `TextView` на экране автоматически обновлялись.
-
-`MovieViewModel.java` (фрагмент кода):
-
-```java
-public class MovieViewModel extends ViewModel {
-    private final MutableLiveData<Movie> selectedMovie = new MutableLiveData<>();
-
-    public void selectMovie(Movie movie) {
-        selectedMovie.setValue(movie);
-    }
-
-    public LiveData<Movie> getSelectedMovie() {
-        return selectedMovie;
-    }
-}
-```
-
-`DetailsFragment.java` (фрагмент кода):
-
-```java
-// ...
-viewModel = new ViewModelProvider(requireActivity()).get(MovieViewModel.class);
-// ...
-viewModel.getSelectedMovie().observe(getViewLifecycleOwner(), movie -> {
-    if (movie != null) {
-        titleTextView.setText(movie.getTitle());
-        directorTextView.setText("Режиссер: " + movie.getDirector());
-        yearTextView.setText("Год выпуска: " + movie.getYear());
-    }
-});
-// ...
-```
-
-Теперь приложение корректно отображало информацию о любом выбранном фильме, демонстрируя реактивный подход к обновлению UI.
-
-<img width="974" height="581" alt="image" src="https://github.com/user-attachments/assets/f3d70074-0ed9-4476-87aa-e046bffd4e57" />
-
-<img width="2749" height="1555" alt="image" src="https://github.com/user-attachments/assets/3778e404-a477-4208-9752-c20b87912eff" />
-
----
-
-## Передача одноразовых данных через Fragment Result API
-
-Нужно реализовать передачу данных от основного фрагмента (`DataFragment`) к диалоговому (`BottomSheetFragment`) с помощью `Fragment Result API`. `DataFragment` должен содержать поле для ввода текста и кнопку. При нажатии на кнопку должен открываться `BottomSheetFragment` и отображать введенный текст.
-
-1. `DataFragment` (Отправитель): В обработчике нажатия кнопки текст из `EditText` упаковывался в `Bundle`, который затем отправлялся через `getParentFragmentManager().setFragmentResult("requestKey", result)`.
-2. `BottomSheetFragment` (Получатель): В методе `onCreate` был установлен слушатель `getParentFragmentManager().setFragmentResultListener("requestKey", ...)`. Как только результат с нужным ключом устанавливался, слушатель срабатывал, извлекал данные из `Bundle` и обновлял `TextView` на своем экране.
-
-`DataFragment.java` (фрагмент кода)
-
-```java
-// ...
-button.setOnClickListener(v -> {
-    String text = editText.getText().toString();
-    Bundle result = new Bundle();
-    result.putString("key", text);
-    getParentFragmentManager().setFragmentResult("requestKey", result);
-
-    BottomSheetFragment bottomSheet = new BottomSheetFragment();
-    bottomSheet.show(getParentFragmentManager(), "ModalBottomSheet");
-});
-// ...
-```
-
-`BottomSheetFragment.java` (фрагмент кода)
-
-```java
-// ...
-@Override
-public void onCreate(@Nullable Bundle savedInstanceState) {
-    super.onCreate(savedInstanceState);
-    getParentFragmentManager().setFragmentResultListener("requestKey", this, (requestKey, bundle) -> {
-        String text = bundle.getString("key");
-        if (receivedDataTextView != null) {
-            receivedDataTextView.setText("Получено: " + text);
-        }
-    });
-}
-// ...
-```
-
-<img width="974" height="560" alt="image" src="https://github.com/user-attachments/assets/d7530cd8-f64a-4306-94c2-9265c3ee918b" />
-
+<img width="1280" height="792" alt="image" src="https://github.com/user-attachments/assets/576ae0ad-ffc6-40d0-b961-813b3bc2c865" />
 
 ---
 
 ## Контрольное задание
 
-### Реализация экрана "Профиль" (Архитектура MVVM)
+### Внедрение Navigation Component в основной проект (SkinCare)
 
-Экран был построен в соответствии с принятой в проекте архитектурой MVVM.
-- `ViewModel` (`ProfileViewModel.java`):
-  - Отвечает за всю логику экрана: получение данных о текущем пользователе и обработку выхода.
-  - Содержит `LiveData<User>`, через которую передает данные пользователя во `Fragment`.
-  - Содержит `LiveData<Boolean>` для оповещения Fragment о том, что был выполнен выход из системы. Это позволяет отделить логику выхода от навигации.
-  - Использует `CurrentUser` и `LogoutUser` use-cases для взаимодействия с `AuthRepository`.
-- `View` (`ProfileFragment.java` и `fragment_profile.xml`):
-  - `ProfileFragment` подписывается на `LiveData` из `ProfileViewModel`. При получении данных о пользователе он обновляет `TextView` для имени и email.
-  - При срабатывании события выхода `logoutEvent` фрагмент выполняет переход на `LoginActivity`, используя флаги `Intent.FLAG_ACTIVITY_CLEAR_TASK` и `Intent.FLAG_ACTIVITY_NEW_TASK` для полной очистки стека экранов.
-  - Изначальная верстка на `LinearLayout` была заменена на `ConstraintLayout` для более надежного позиционирования элементов и решения проблемы с "пропавшей" кнопкой. Заголовок был вынесен в отдельный `TextView` внутри `Toolbar` для кастомизации (жирный шрифт, центрирование).
- 
-- Меню навигации (`menu_bottom.xml`): В ресурсный файл меню был добавлен новый пункт `<item>` для "Профиля" с соответствующей иконкой и id.
-- Главная активность (`MainActivity.java`): Обработчик setOnItemSelectedListener для `BottomNavigationView` был расширен. В него добавлено условие `else if (id == R.id.nav_profile)`, которое создает экземпляр `ProfileFragment` и отображает его в контейнере `R.id.container`.
-- Бэк-стек: Навигация между основными разделами в `MainActivity` выполняется через метод replace() без вызова `addToBackStack()`. Это является стандартной практикой для `BottomNavigationView` и предотвращает наслоение главных экранов друг на друга при нажатии системной кнопки "Назад".
+1. Подключение зависимостей: В `build.gradle.kts` добавлены библиотеки `androidx.navigation:navigation-fragment` и `androidx.navigation:navigation-ui`.
+2. Создание графа навигации:
+- Создан файл `mobile_navigation.xml`.
+- Определены фрагменты: `HomeFragment`, `CatalogFragment`, `ScanFragment`, `FavoritesFragment`, `ProfileFragment`.
+- Настроены аргументы (argument) для передачи category_id в каталог.
+- Добавлен action для перехода с главного экрана в каталог.
+3. Интеграция в Layout: В `activity_main.xml` контейнер `FrameLayout` заменен на `androidx.fragment.app.FragmentContainerView`, указан `navGraph`.
+4. Связывание с кодом:
+- В MainActivity настроен NavController.
+- Метод setupWithNavController заменен на кастомный слушатель setOnItemSelectedListener для сохранения логики блокировки раздела «Сканирование» для неавторизованных пользователей (гостей).
+- Для авторизованных пользователей управление передается методу NavigationUI.onNavDestinationSelected.
+5. Передача данных: В HomeFragment реализована навигация через NavController с передачей Bundle при клике на категорию.
 
-<img width="974" height="580" alt="image" src="https://github.com/user-attachments/assets/814ec741-75de-4f5b-8879-1cded5646466" />
+<img width="1280" height="746" alt="image" src="https://github.com/user-attachments/assets/03a3fb4a-e3d7-495c-9a21-d9172090448e" />
 
 --- 
 
 ## Итоги
 
-В результате выполнения данной практической работы были получине комплексные знания о работе с фрагментами и освоены три ключевых механизма обмена данными, каждый из которых подходит для своих задач:
-- `Bundle`: Идеален для передачи первоначальных данных при создании фрагмента.
-- `ViewModel` и `LiveData`: Мощный инструмент для организации общего состояния между несколькими фрагментами или между фрагментами и `Activity`. Обеспечивает сохранение состояния при смене конфигурации и позволяет строить реактивные UI.
-- `Fragment Result API`: Лучший выбор для передачи одноразовых, событийных данных (например, результат выбора в диалоге), так как он не создает сильной связи между компонентами.
-Полученные навыки позволяют проектировать модульные, гибкие и легко поддерживаемые Android-приложения, соответствующие современным стандартам разработки.
+В ходе работы была реализована навигация в Android-приложениях тремя способами. Были изучены компоненты `BottomNavigationView` и `NavigationDrawer`, а также произведена миграция управления фрагментами на современный подход `Jetpack Navigation Component`. Это позволило упростить код `MainActivity`, избавиться от ручных транзакций `FragmentManager` и визуализировать карту переходов в приложении.
 
 ---
 
