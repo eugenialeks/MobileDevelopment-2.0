@@ -10,6 +10,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -44,13 +45,15 @@ public class HomeFragment extends Fragment {
     @Override public void onViewCreated(@NonNull View v, @Nullable Bundle b) {
         RecyclerView rv = v.findViewById(R.id.rvCategories);
         rv.setLayoutManager(new GridLayoutManager(getContext(), 2));
+
         rv.setAdapter(new CategoryAdapter(data, cat -> {
-            requireActivity().getSupportFragmentManager()
-                    .beginTransaction()
-                    .replace(R.id.container, CatalogFragment.newInstance(cat.id))
-                    .addToBackStack(null)
-                    .commit();
+            Bundle args = new Bundle();
+            args.putString("arg_category_id", cat.id);
+
+            Navigation.findNavController(v)
+                    .navigate(R.id.action_home_to_catalog, args);
         }));
+
 
         v.findViewById(R.id.btnSearch).setOnClickListener(view ->
                 startActivity(new android.content.Intent(requireContext(), SearchActivity.class)));

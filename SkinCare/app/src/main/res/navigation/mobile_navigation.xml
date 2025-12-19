@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/mobile_navigation"
+    app:startDestination="@+id/nav_home">
+
+    <fragment
+        android:id="@+id/nav_home"
+        android:name="ru.mirea.golysheva.skincare.presentation.HomeFragment"
+        android:label="Главная"
+        tools:layout="@layout/fragment_home">
+        <action
+            android:id="@+id/action_home_to_catalog"
+            app:destination="@id/nav_catalog" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/nav_catalog"
+        android:name="ru.mirea.golysheva.skincare.presentation.CatalogFragment"
+        android:label="Каталог"
+        tools:layout="@layout/fragment_catalog">
+        <argument
+            android:name="arg_category_id"
+            app:argType="string"
+            app:nullable="true"
+            android:defaultValue="@null" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/nav_scan"
+        android:name="ru.mirea.golysheva.skincare.presentation.ScanFragment"
+        android:label="Сканировать"
+        tools:layout="@layout/fragment_scan" />
+
+    <fragment
+        android:id="@+id/nav_fav"
+        android:name="ru.mirea.golysheva.skincare.presentation.FavoritesFragment"
+        android:label="Избранное"
+        tools:layout="@layout/fragment_favorites" />
+
+    <fragment
+        android:id="@+id/nav_profile"
+        android:name="ru.mirea.golysheva.skincare.presentation.ProfileFragment"
+        android:label="Профиль"
+        tools:layout="@layout/fragment_profile" />
+
+</navigation>

@@ -33,24 +33,49 @@ android {
 }
 
 dependencies {
+    // --- Основные библиотеки ---
     implementation(libs.appcompat)
     implementation(libs.activity)
     implementation(libs.constraintlayout)
-    testImplementation(libs.junit)
-    androidTestImplementation(libs.ext.junit)
-    androidTestImplementation(libs.espresso.core)
-    implementation ("androidx.recyclerview:recyclerview:1.3.2")
-    implementation(project(":domain"))
-    implementation(project(":data"))
+    implementation("androidx.recyclerview:recyclerview:1.3.2")
+    implementation("com.google.android.material:material:1.12.0")
+
+    // --- NAVIGATION COMPONENT (Добавлено для задания) ---
+    val navVersion = "2.8.4"
+    implementation("androidx.navigation:navigation-fragment:$navVersion")
+    implementation("androidx.navigation:navigation-ui:$navVersion")
+
+    // --- LIFECYCLE FIX (Исправление конфликта версий) ---
+    // Принудительно ставим новые версии, чтобы AppCompat 1.7.1 не ругался
+    val lifecycleVersion = "2.6.2"
+    implementation("androidx.lifecycle:lifecycle-viewmodel:$lifecycleVersion")
+    implementation("androidx.lifecycle:lifecycle-livedata:$lifecycleVersion")
+    implementation("androidx.lifecycle:lifecycle-common:$lifecycleVersion")
+
+    // --- Изображения ---
+    implementation("io.coil-kt:coil:2.6.0")
+    implementation("com.github.bumptech.glide:glide:4.16.0")
+
+    // --- Сеть (Retrofit & OkHttp) ---
+    implementation("com.squareup.retrofit2:retrofit:2.11.0")
+    implementation("com.squareup.retrofit2:converter-gson:2.11.0")
+    implementation("com.squareup.okhttp3:logging-interceptor:4.12.0")
+    implementation("com.squareup.okhttp3:okhttp:4.12.0")
+
+    // --- Firebase ---
     implementation(platform("com.google.firebase:firebase-bom:33.5.1"))
     implementation("com.google.firebase:firebase-analytics")
     implementation("com.google.firebase:firebase-auth")
-    implementation ("com.squareup.retrofit2:retrofit:2.11.0")
-    implementation ("com.squareup.retrofit2:converter-gson:2.11.0")
-    implementation ("com.squareup.okhttp3:logging-interceptor:4.12.0")
-    implementation("com.squareup.okhttp3:okhttp:4.12.0")
-    implementation ("com.google.android.material:material:1.12.0")
-    implementation("io.coil-kt:coil:2.6.0")
 
-    implementation ("com.github.bumptech.glide:glide:4.16.0")
+    // --- ML / TensorFlow ---
+    implementation("org.tensorflow:tensorflow-lite:2.14.0")
+
+    // --- Модули проекта ---
+    implementation(project(":domain"))
+    implementation(project(":data"))
+
+    // --- Тесты ---
+    testImplementation(libs.junit)
+    androidTestImplementation(libs.ext.junit)
+    androidTestImplementation(libs.espresso.core)
 }
